@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Voz do Time — Painel de Melhorias</title>
+<style>
+:root {
+  --bg:#f4f7fb; --panel:#ffffff; --text:#172033; --muted:#667085; --line:#e4e7ec;
+  --primary:#635bff; --primary2:#8b5cf6; --good:#12b76a; --warn:#f79009; --danger:#f04438;
+  --shadow:0 10px 30px rgba(16,24,40,.08); --radius:18px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit}
+.app{display:grid;grid-template-columns:270px 1fr;min-height:100vh}
+.sidebar{background:#111827;color:#fff;padding:24px 18px;position:sticky;top:0;height:100vh}
+.brand{display:flex;gap:12px;align-items:center;margin-bottom:28px}
+.logo{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,var(--primary),#22c55e);display:grid;place-items:center;font-weight:800}
+.brand h1{font-size:17px;margin:0} .brand p{font-size:12px;color:#9ca3af;margin:3px 0 0}
+.nav button{width:100%;border:0;background:transparent;color:#cbd5e1;text-align:left;padding:12px 14px;border-radius:12px;margin:4px 0;cursor:pointer}
+.nav button.active,.nav button:hover{background:#1f2937;color:#fff}
+.side-stats{margin-top:28px;padding:14px;background:#1f2937;border-radius:14px}
+.side-stats .n{font-size:26px;font-weight:800} .side-stats .label{font-size:12px;color:#9ca3af}
+.main{padding:28px;max-width:1600px;width:100%;margin:0 auto}
+.topbar{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:22px}
+.topbar h2{margin:0;font-size:28px} .topbar p{margin:6px 0 0;color:var(--muted)}
+.badge{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 12px;font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+.kpi .label{color:var(--muted);font-size:13px} .kpi .value{font-size:28px;font-weight:800;margin-top:6px}
+.toolbar{display:grid;grid-template-columns:1.5fr .8fr .8fr auto;gap:10px;margin-bottom:18px}
+.control{background:#fff;border:1px solid var(--line);border-radius:12px;padding:11px 13px;outline:none;width:100%}
+.control:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(99,91,255,.12)}
+.btn{border:0;border-radius:12px;padding:11px 15px;font-weight:700;cursor:pointer}
+.btn-primary{background:var(--primary);color:#fff} .btn-secondary{background:#fff;border:1px solid var(--line);color:var(--text)}
+.content-layout{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:18px;align-items:start}
+.messages{display:grid;gap:12px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 6px 18px rgba(16,24,40,.04)}
+.card-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.id{font-weight:800} .dept{font-size:12px;background:#f2f4f7;padding:5px 8px;border-radius:999px;color:#475467}
+.status{font-size:12px;padding:5px 8px;border-radius:999px}
+.status.pending{background:#fff7ed;color:#c2410c} .status.done{background:#ecfdf3;color:#027a48}
+.msg{font-size:15px;line-height:1.55;margin:14px 0;color:#344054}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.reply-area{display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+.reply-area.open{display:block}
+textarea{min-height:92px;resize:vertical}
+.right-panel{position:sticky;top:20px}
+.summary-card{background:linear-gradient(155deg,#111827,#1f2937);color:white;border-radius:18px;padding:18px;box-shadow:var(--shadow)}
+.summary-card h3{margin:0 0 8px} .summary-card p{color:#cbd5e1;font-size:13px;line-height:1.5}
+.progress{height:8px;background:#374151;border-radius:99px;overflow:hidden;margin:10px 0 16px}
+.progress span{display:block;height:100%;background:linear-gradient(90deg,#8b5cf6,#22c55e)}
+.legend{font-size:12px;color:#9ca3af}
+.dept-list{margin-top:14px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:15px}
+.dept-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f2f4f7;font-size:13px} .dept-row:last-child{border-bottom:0}
+.view{display:none} .view.active{display:block}
+.rank-list{display:grid;gap:12px}
+.rank-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;display:grid;grid-template-columns:55px 1fr auto;gap:16px;align-items:start}
+.rank-num{width:46px;height:46px;border-radius:14px;background:#eef2ff;color:#4338ca;display:grid;place-items:center;font-weight:900;font-size:20px}
+.rank-card h4{margin:0 0 5px} .rank-card p{margin:5px 0;color:#667085;line-height:1.5;font-size:14px}
+.score{text-align:right;min-width:140px} .score strong{font-size:22px}
+.pills{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px} .pill{background:#f2f4f7;border-radius:999px;padding:5px 8px;font-size:12px;color:#475467}
+.matrix{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:16px}
+.matrix .box{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px}
+.matrix h4{margin:0 0 10px} .matrix ul{padding-left:18px;color:#475467}
+.empty{text-align:center;color:#98a2b3;padding:40px;background:#fff;border-radius:16px;border:1px dashed #d0d5dd}
+.toast{position:fixed;right:24px;bottom:24px;background:#101828;color:#fff;padding:12px 16px;border-radius:12px;opacity:0;transform:translateY(10px);transition:.2s;pointer-events:none} .toast.show{opacity:1;transform:none}
+@media(max-width:1100px){.content-layout{grid-template-columns:1fr}.right-panel{position:static}.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:760px){.app{grid-template-columns:1fr}.sidebar{position:static;height:auto}.nav{display:flex;gap:6px;overflow:auto}.nav button{min-width:max-content}.side-stats{display:none}.toolbar{grid-template-columns:1fr}.grid{grid-template-columns:1fr 1fr}.main{padding:16px}.rank-card{grid-template-columns:46px 1fr}.score{grid-column:2;text-align:left}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><div class="logo">VT</div><div><h1>Voz do Time</h1><p>Painel de melhorias internas</p></div></div>
+    <div class="nav">
+      <button class="active" data-view="inbox">💬 Mensagens</button>
+      <button data-view="insights">✨ Prioridades</button>
+      <button data-view="departments">🏢 Departamentos</button>
+    </div>
+    <div class="side-stats"><div class="n" id="sideDone">0/40</div><div class="label">mensagens respondidas</div></div>
+  </aside>
+
+  <main class="main">
+    <section id="inbox" class="view active">
+      <div class="topbar">
+        <div><h2>Mensagens dos colaboradores</h2><p>Leia, classifique e responda cada contribuição.</p></div>
+        <span class="badge">🔒 Respostas salvas neste navegador</span>
+      </div>
+      <div class="grid">
+        <div class="kpi"><div class="label">Total de respostas</div><div class="value">40</div></div>
+        <div class="kpi"><div class="label">Respondidas</div><div class="value" id="kpiDone">0</div></div>
+        <div class="kpi"><div class="label">Pendentes</div><div class="value" id="kpiPending">40</div></div>
+        <div class="kpi"><div class="label">Departamentos</div><div class="value" id="kpiDept">0</div></div>
+      </div>
+      <div class="toolbar">
+        <input id="search" class="control" placeholder="Buscar por palavra-chave...">
+        <select id="deptFilter" class="control"><option value="">Todos os departamentos</option></select>
+        <select id="statusFilter" class="control"><option value="">Todos os status</option><option value="pending">Pendentes</option><option value="done">Respondidas</option></select>
+        <button id="clearFilters" clas
